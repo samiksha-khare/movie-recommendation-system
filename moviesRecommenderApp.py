@@ -1,7 +1,25 @@
+import os
 import streamlit as st
 import pickle
 import pandas as pd
 import requests # to hit API
+
+def download_s3_file(url, local_filename):
+    if os.path.exists(local_filename):
+        print(f"{local_filename} already exists. Skipping download.")
+        return
+    try:
+        with requests.get(url, stream=True, timeout=300) as response:
+            response.raise_for_status()
+            with open(local_filename, 'wb') as file:
+                for chunk in response.iter_content(chunk_size=8192):
+                    if chunk:
+                        file.write(chunk)
+            print(f"{local_filename} downloaded successfully to the root directory!")
+    except requests.exceptions.Timeout:
+        print(f"The request for {local_filename} timed out. Try increasing the timeout value.")
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred: {e}")
 
 def fetch_poster(movie_id):
     url = "https://api.themoviedb.org/3/movie/{}?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US".format(movie_id)
@@ -24,10 +42,11 @@ def recommend(movie):
 
     return recommended_movie_names,recommended_movie_posters
     
+download_s3_file("https://flixly-movie-recommendation.s3.us-east-2.amazonaws.com/movieDict.pkl", "movieDict.pkl")
+download_s3_file("https://flixly-movie-recommendation.s3.us-east-2.amazonaws.com/similarity.pkl", "similarity.pkl")
 
 movie_dict = pickle.load(open('movieDict.pkl','rb'))
 movies =pd.DataFrame(movie_dict)  
-
 similarity = pickle.load(open('similarity.pkl','rb'))
 
 
