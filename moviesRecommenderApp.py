@@ -3,6 +3,10 @@ import streamlit as st
 import pickle
 import pandas as pd
 import requests # to hit API
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 def download_s3_file(url, local_filename):
     if os.path.exists(local_filename):
@@ -22,7 +26,8 @@ def download_s3_file(url, local_filename):
         print(f"An error occurred: {e}")
 
 def fetch_poster(movie_id):
-    url = "https://api.themoviedb.org/3/movie/{}?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US".format(movie_id)
+    api_key = os.getenv('TMDB_API_KEY')
+    url = "https://api.themoviedb.org/3/movie/{}?api_key={}&language=en-US".format(movie_id, api_key)
     data = requests.get(url)
     data = data.json()
     poster_path = data['poster_path']
