@@ -2,6 +2,8 @@
 
 This project implements a **Content-Based Movie Recommender System** using the TMDB (The Movie Database) dataset. The system uses **Cosine Similarity** to recommend movies based on their features such as genres, keywords, cast, crew, and the movie overview.
 
+https://nextflick-movie-recommender.streamlit.app/ 
+
 ## Project Overview
 
 The movie recommender system is built using the following steps:
